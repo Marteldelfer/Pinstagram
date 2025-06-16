@@ -1,0 +1,33 @@
+services:
+  post-service-db:
+    image: postgres
+    container_name: post-service-db
+    environment:
+      - POSTGRES_USER=admin_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+    ports:
+      - "5001:5432"
+    networks:
+      - internal
+
+  post-service:
+    env_file: ".env"
+    image: posts-service
+    container_name: post-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://post-service-db:5432/db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+    ports:
+      - "4001:4001"
+    networks:
+      - internal
+    depends_on:
+      - post-service-db
+
+networks:
+  internal:
+    driver: bridge

@@ -9,9 +9,6 @@ FROM eclipse-temurin:21-jre AS runner
 WORKDIR /app
 COPY --from=builder ./app/target/posts-service-0.0.1-SNAPSHOT.jar ./app.jar
 
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-
 EXPOSE 4001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
