@@ -24,20 +24,31 @@ public class PostService {
     private final StorageService storageService;
     private final Logger logger = LoggerFactory.getLogger(PostService.class);
 
+    private Post findActivePostById(UUID id) {
+        Post post = postRepository.findByIdAndNotDeleted(id).orElseThrow(
+                () -> new PostNotFoundException("Post with id " + id + " not found")
+        );
+        if (post.isDeleted()) {
+            throw new PostNotFoundException("Post with id " + id + " not found");
+        }
+        return post;
+    }
+
+    private List<Post> findAllActivePosts() {
+        return postRepository.findAllNotIsDeleted();
+    }
+
     public PostService(PostRepository postRepository,  StorageService storageService) {
         this.postRepository = postRepository;
         this.storageService = storageService;
     }
 
-    public List<PostResponseDTO> findAll() {
-        List<Post> posts = postRepository.findAll();
-        return posts.stream().map(Mapper::toPostResponseDTO).toList();
+    public List<PostResponseDTO> findAll() { // TODO replace by recommendation system
+        return findAllActivePosts().stream().map(Mapper::toPostResponseDTO).toList();
     }
 
     public PostResponseDTO getPostById(UUID id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new PostNotFoundException("Post with id " + id + " not found")
-        );
+        Post post = findActivePostById(id);
         return Mapper.toPostResponseDTO(post);
     }
 
@@ -79,9 +90,8 @@ public class PostService {
         if (!contentType.equals("image/jpeg") && !contentType.equals("image/png")) {
             throw new ContentTypeNotValidException("Content type " + contentType + " is not supported");
         }
-        Post post =  postRepository.findById(id).orElseThrow(
-                () -> new PostNotFoundException("Post with id " + id + " not found")
-        );
+        Post post = findActivePostById(id);
+
         try {
             storageService.updateFile(post.getImageUrl(), postRequestDTO.getImage());
             post.setEdited(true);
@@ -100,13 +110,7 @@ public class PostService {
     }
 
     public void deletePostById(UUID id) {
-        Post post = postRepository.findById(id).orElseThrow(
-                () -> new PostNotFoundException("Post with id " + id + " not found")
-        );
-        if (post.isDeleted()) {
-            logger.warn("Post with id {} has been deleted", id);
-            throw new PostNotFoundException("Post with id " + id + " not found");
-        }
+        Post post = findActivePostById(id);
         post.setDeleted(true);
         post.setDeletedAt(Instant.now());
         postRepository.save(post);
