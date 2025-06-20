@@ -13,7 +13,9 @@ services:
 
   post-service:
     env_file: ".env"
-    image: posts-service
+    build:
+      context: ./posts-service
+      dockerfile: Dockerfile
     container_name: post-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://post-service-db:5432/db
@@ -23,10 +25,43 @@ services:
       - SPRING_SQL_INIT_MODE=always
     ports:
       - "4001:4001"
+      - "9001:9001"
     networks:
       - internal
     depends_on:
       - post-service-db
+
+  comment-service-db:
+    image: postgres
+    container_name: comment-service-db
+    environment:
+      - POSTGRES_USER=admin_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+    ports:
+      - "5002:5432"
+    networks:
+      - internal
+
+  comment-service:
+    build:
+      dockerfile: Dockerfile
+      context: ./comment-service
+    container_name: comment-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://comment-service-db:5432/db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - POST_VALIDATION_SERVICE_ADDRESS=post-service
+      - POST_VALIDATION_SERVICE_PORT=9001
+    ports:
+      - "4002:4002"
+    networks:
+      - internal
+    depends_on:
+      - comment-service-db
 
 networks:
   internal:

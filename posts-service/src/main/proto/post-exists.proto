@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.pinstagram.postservice";
+option java_outer_classname = "PostValidationProto";
+
+service PostValidationService {
+  rpc CheckPostExists (PostExistsRequest) returns (PostExistsResponse);
+}
+
+message PostExistsRequest {
+  string postId = 1;
+}
+
+message PostExistsResponse {
+  bool postExists = 1;
+}

@@ -7,7 +7,7 @@ import com.pinstagram.posts_service.model.Post;
 public class Mapper {
 
     public static PostResponseDTO toPostResponseDTO(Post post) {
-        return  PostResponseDTO.builder()
+        return PostResponseDTO.builder()
                 .id(post.getId())
                 .authorId(post.getAuthorId())
                 .imageUrl(post.getImageUrl())

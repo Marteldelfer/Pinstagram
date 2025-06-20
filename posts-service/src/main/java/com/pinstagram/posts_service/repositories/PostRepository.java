@@ -18,4 +18,8 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
     @Query("SELECT p FROM Post p WHERE p.id = :id AND p.isDeleted = false")
     Optional<Post> findByIdAndNotDeleted(@Param("id") UUID id);
+
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Post p " +
+            "WHERE p.id = :id AND p.isDeleted = false")
+    boolean existsByIdAndDeletedFalse(@Param("id") UUID id);
 }
