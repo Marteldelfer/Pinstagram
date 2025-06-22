@@ -63,6 +63,37 @@ services:
     depends_on:
       - comment-service-db
 
+  account-service-db:
+    image: postgres
+    container_name: account-service-db
+    environment:
+      - POSTGRES_USER=admin_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+    ports:
+      - "5003:5432"
+    networks:
+      - internal
+
+  account-service:
+    env_file:
+      - .env
+    build:
+      dockerfile: Dockerfile
+      context: ./account-service
+    container_name: account-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://account-service-db:5432/db
+      - SPRING_DATASOURCE_USERNAME=admin_user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+    ports:
+      - "4003:4003"
+    networks:
+      - internal
+
+
 networks:
   internal:
     driver: bridge
