@@ -25,7 +25,7 @@ public class Mapper {
                 .publicationCount(account.getPublicationCount())
                 .followerCount(account.getFollowerCount())
                 .followingCount(account.getFollowingCount())
-                .isPrivate(account.isPrivate())
+                .isPrivate(account.getIsPrivate())
                 .build();
     }
 

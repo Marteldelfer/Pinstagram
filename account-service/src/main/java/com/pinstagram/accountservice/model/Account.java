@@ -38,9 +38,11 @@ public class Account {
     private String bio;
 
     @NotNull(message = "Deleted field is required") // should be assured inside service logic
-    private boolean deleted;
+    private Boolean deleted;
     @NotNull(message = "isPrivate field is required")
-    private boolean isPrivate;
+    private Boolean isPrivate;
+    @NotNull(message = "Validated field is required")
+    private Boolean validated;
 
     @NotNull(message = "CreateAt field is required") // should be assured inside service logic
     private Instant createdAt;

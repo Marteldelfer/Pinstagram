@@ -5,6 +5,8 @@ import com.pinstagram.accountservice.dto.AccountEditRequestDto;
 import com.pinstagram.accountservice.dto.AccountRequestDto;
 import com.pinstagram.accountservice.dto.AccountResponseDto;
 import com.pinstagram.accountservice.exception.*;
+import com.pinstagram.accountservice.grpc.TokenGrpcClient;
+import com.pinstagram.accountservice.kafka.KafkaProducer;
 import com.pinstagram.accountservice.mapper.Mapper;
 import com.pinstagram.accountservice.model.Account;
 import com.pinstagram.accountservice.repository.AccountRepository;
@@ -22,16 +24,22 @@ import java.util.UUID;
 @Service
 public class AccountService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
     private final AccountRepository accountRepository;
     private final StorageService storageService;
-    private static final Logger logger = LoggerFactory.getLogger(AccountService.class);
+    private final KafkaProducer kafkaProducer;
+    private final TokenGrpcClient tokenGrpcClient;
 
     public AccountService(
             AccountRepository accountRepository,
-            StorageService storageService
+            StorageService storageService,
+            KafkaProducer kafkaProducer,
+            TokenGrpcClient tokenGrpcClient
     ) {
         this.accountRepository = accountRepository;
         this.storageService = storageService;
+        this.kafkaProducer = kafkaProducer;
+        this.tokenGrpcClient = tokenGrpcClient;
     }
 
     public AccountResponseDto findById(UUID id) {
@@ -56,8 +64,16 @@ public class AccountService {
         account.setFollowerCount(0);
         account.setFollowingCount(0);
         account.setPublicationCount(0);
-        account.setPrivate(true);
-        return Mapper.toDto(accountRepository.save(account));
+        account.setIsPrivate(true);
+        account.setValidated(false);
+        account = accountRepository.save(account);
+
+        logger.info("Account with id {} has been created", account.getId());
+
+        String unvalidatedToken = tokenGrpcClient.getUnvalidatedToken(account);
+        kafkaProducer.sendConfirmationEmail(account, unvalidatedToken);
+
+        return Mapper.toDto(account);
     }
 
     public AccountResponseDto updateAccountDetails(UUID id, AccountEditRequestDto accountRequestDto) {
@@ -66,7 +82,7 @@ public class AccountService {
                 () -> new UserAccountNotFoundException("Account with id " + id + " not found")
         );
         account.setBio(accountRequestDto.getBio());
-        account.setPrivate(accountRequestDto.getIsPrivate());
+        account.setIsPrivate(accountRequestDto.getIsPrivate());
         account.setUpdatedAt(Instant.now());
 
         return Mapper.toDto(accountRepository.save(account));
