@@ -49,6 +49,12 @@ public class AccountService {
         return Mapper.toDto(account);
     }
 
+    public Account findByEmail(String email) {
+        return accountRepository.findByEmailAndDeletedFalse(email).orElseThrow(
+                () -> new UserAccountNotFoundException("Account with email " + email + " not found")
+        );
+    }
+
     public List<AccountResponseDto> findAll() {
         return accountRepository.findAllByDeletedFalse().stream().map(Mapper::toDto).toList();
     }
@@ -127,6 +133,19 @@ public class AccountService {
         );
         account.setDeleted(true);
         account.setDeletedAt(Instant.now());
+        accountRepository.save(account);
+    }
+
+    public void verifyAccount(String email) {
+        logger.info("Verifying account with email {}", email);
+        Account account = accountRepository.findByEmailAndDeletedFalse(email).orElseThrow(
+                () -> new UserAccountNotFoundException("Account with email " + email + " not found")
+        );
+        if (account.getValidated()) {
+            throw new AccountAlreadyValidatedException("Account with email " + email + " already validated");
+        }
+        account.setValidated(true);
+        account.setUpdatedAt(Instant.now());
         accountRepository.save(account);
     }
 }

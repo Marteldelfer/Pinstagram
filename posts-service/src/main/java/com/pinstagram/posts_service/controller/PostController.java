@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/post")
 @Tag(name = "Posts", description = "API for managing posts")
 public class PostController {
 

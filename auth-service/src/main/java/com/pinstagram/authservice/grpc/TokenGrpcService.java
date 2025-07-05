@@ -1,9 +1,9 @@
 package com.pinstagram.authservice.grpc;
 
 import com.pinstagram.authservice.util.JwtUtil;
-import com.pinstagram.tokenservice.TokenRequest;
+import com.pinstagram.tokenservice.AccountDetails;
 import com.pinstagram.tokenservice.TokenServiceGrpc;
-import com.pinstagram.tokenservice.UnvalidatedTokenResponse;
+import com.pinstagram.tokenservice.TokenResponse;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
@@ -20,12 +20,12 @@ public class TokenGrpcService extends TokenServiceGrpc.TokenServiceImplBase {
 
     @Override
     public void getUnvalidatedToken(
-            TokenRequest request,
-            StreamObserver<UnvalidatedTokenResponse> responseObserver
+            AccountDetails request,
+            StreamObserver<TokenResponse> responseObserver
     ) {
         logger.info("Generating new unvalidated token");
         String token = jwtUtil.generateUnvalidatedToken(request);
-        UnvalidatedTokenResponse response = UnvalidatedTokenResponse.newBuilder()
+        TokenResponse response = TokenResponse.newBuilder()
                 .setUnvalidatedToken(token).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();

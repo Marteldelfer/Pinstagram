@@ -1,7 +1,8 @@
 package com.pinstagram.authservice.util;
 
 import com.pinstagram.authservice.model.AuthUser;
-import com.pinstagram.tokenservice.TokenRequest;
+import com.pinstagram.tokenservice.AccountDetails;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,21 +26,21 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    /*public String generateToken(AuthUser authUser) { // TODO get fields from account-service
+    public String generateToken(AuthUser authUser, AccountDetails accountDetails) {
         return Jwts.builder()
                 .subject(authUser.getEmail())
                 .claim("id", authUser.getId())
-                .claim("name", authUser.())
-                .claim("username", authUser.getUsername())
+                .claim("name", accountDetails.getName())
+                .claim("username", accountDetails.getUsername())
                 .claim("role", "user")
-                .claim("validated", true)
+                .claim("validated", accountDetails.getValidated())
                 .issuedAt(new Date())
-                .expiration(DateUtils.addDays(new Date(), 3))
+                .expiration(DateUtils.addDays(new Date(), 1))
                 .signWith(secretKey)
                 .compact();
-    }*/
+    }
 
-    public String generateUnvalidatedToken(TokenRequest request) {
+    public String generateUnvalidatedToken(AccountDetails request) {
         return Jwts.builder()
                 .subject(request.getEmail())
                 .claim("id", request.getId())
@@ -51,6 +52,15 @@ public class JwtUtil {
                 .expiration(DateUtils.addMinutes(new Date(), 15))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    public Claims getClaims(String token) {
+        try {
+            return Jwts.parser().verifyWith((SecretKey) secretKey).build()
+                    .parseSignedClaims(token).getPayload();
+        } catch (JwtException e) {
+            throw new JwtException("Invalid JWT token");
+        }
     }
 
     public void validateToken(String token) {

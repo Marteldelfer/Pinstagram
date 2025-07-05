@@ -107,7 +107,7 @@
               Thank you for signing up for <strong>Pinstagram</strong>! Please verify your email address to complete your account setup.
             </p>
             <div class="email-button-container">
-              <a href="https://pinstagram.com/verify?token=YOUR_VERIFICATION_TOKEN" class="email-button">
+              <a th:href="'http://localhost:4003/account/verify/' + ${token}" class="email-button">
                 Confirm Email
               </a>
             </div>

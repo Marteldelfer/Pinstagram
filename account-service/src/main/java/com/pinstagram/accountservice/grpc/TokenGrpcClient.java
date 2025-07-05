@@ -1,9 +1,9 @@
 package com.pinstagram.accountservice.grpc;
 
 import com.pinstagram.accountservice.model.Account;
-import com.pinstagram.tokenservice.TokenRequest;
+import com.pinstagram.tokenservice.AccountDetails;
+import com.pinstagram.tokenservice.TokenResponse;
 import com.pinstagram.tokenservice.TokenServiceGrpc;
-import com.pinstagram.tokenservice.UnvalidatedTokenResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
@@ -29,13 +29,13 @@ public class TokenGrpcClient {
     }
 
     public String getUnvalidatedToken(Account account) {
-        TokenRequest tokenRequest = TokenRequest.newBuilder()
+        AccountDetails tokenRequest = AccountDetails.newBuilder()
                 .setId(account.getId().toString())
                 .setEmail(account.getEmail())
                 .setName(account.getName())
                 .setUsername(account.getUsername())
                 .build();
-        UnvalidatedTokenResponse response =  blockingStub.getUnvalidatedToken(tokenRequest);
+        TokenResponse response =  blockingStub.getUnvalidatedToken(tokenRequest);
         return response.getUnvalidatedToken();
     }
 }

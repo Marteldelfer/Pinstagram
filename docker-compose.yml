@@ -93,6 +93,7 @@ services:
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     ports:
       - "4003:4003"
+      - "9003:9003"
     depends_on:
       - account-service-db
     networks:
@@ -138,6 +139,8 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_SQL_INIT_MODE=always
       - JWT_SECRET=eqZBWm4S1EqxNKaNuwBJNFzXIOTYQAXdaoOrbUTQS1Q=
+      - TOKEN_SERVICE_ADDRESS=account-service
+      - TOKEN_SERVICE_PORT=9003
     ports:
       - "4005:4005"
       - "9005:9005"

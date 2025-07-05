@@ -5,16 +5,23 @@ option java_package = "com.pinstagram.tokenservice";
 option java_outer_classname = "TokenServiceProto";
 
 service TokenService {
-  rpc GetUnvalidatedToken (TokenRequest) returns (UnvalidatedTokenResponse);
+  rpc GetUnvalidatedToken (AccountDetails) returns (TokenResponse);
+  rpc GetAccountDetails (AccountDetailsRequest) returns (AccountDetails);
+  rpc VerifyAccount (AccountDetailsRequest) returns (AccountDetails);
 }
 
-message TokenRequest {
+message AccountDetails {
   string id = 1;
   string email = 2;
   string name = 3;
   string username = 4;
+  bool validated = 5;
 }
 
-message UnvalidatedTokenResponse {
+message TokenResponse {
   string unvalidatedToken = 1;
+}
+
+message AccountDetailsRequest {
+  string email = 1;
 }
