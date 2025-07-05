@@ -149,6 +149,18 @@ services:
     depends_on:
       - auth-service-db
 
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:4005
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+
   kafka:
     image: bitnami/kafka:latest
     container_name: kafka

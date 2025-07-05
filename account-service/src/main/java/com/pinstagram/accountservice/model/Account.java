@@ -32,6 +32,7 @@ public class Account {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email formated incorrectly")
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Size(max = 255, message = "Bio must be at most 255 characters long")

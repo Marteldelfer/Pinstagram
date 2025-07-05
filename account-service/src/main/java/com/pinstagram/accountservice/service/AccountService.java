@@ -76,6 +76,7 @@ public class AccountService {
 
         logger.info("Account with id {} has been created", account.getId());
 
+        tokenGrpcClient.createAuthUser(accountRequestDto);
         String unvalidatedToken = tokenGrpcClient.getUnvalidatedToken(account);
         kafkaProducer.sendConfirmationEmail(account, unvalidatedToken);
 

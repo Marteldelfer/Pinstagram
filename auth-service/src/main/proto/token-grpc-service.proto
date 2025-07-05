@@ -6,6 +6,7 @@ option java_outer_classname = "TokenServiceProto";
 
 service TokenService {
   rpc GetUnvalidatedToken (AccountDetails) returns (TokenResponse);
+  rpc CreateAuthUser (CreateAuthUserRequest) returns (Empty);
   rpc GetAccountDetails (AccountDetailsRequest) returns (AccountDetails);
   rpc VerifyAccount (AccountDetailsRequest) returns (AccountDetails);
 }
@@ -24,4 +25,13 @@ message TokenResponse {
 
 message AccountDetailsRequest {
   string email = 1;
+}
+
+message CreateAuthUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message Empty {
+
 }

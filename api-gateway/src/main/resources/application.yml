@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: post-service-route
+              uri: http://post-service:4001
+              predicates:
+                - Path=/api/post/**
+              filters:
+                - StripPrefix=1
+                - JwtValidation
+
+            - id: comment-service-route
+              uri: http://comment-service:4002
+              predicates:
+                - Path=/api/comment/**
+              filters:
+                - StripPrefix=1
+                - JwtValidation
+
+            - id: account-service-route
+              uri: http://account-service:4003
+              predicates:
+                - Path=/api/account/**
+              filters:
+                - StripPrefix=1
+
+            - id: auth-service-route
+              uri: http://auth-service:4005
+              predicates:
+                - Path=/auth/**
+              filters:
+                - StripPrefix=1
+
+            - id: api-docs-post-route
+              uri: http://post-service:4001
+              predicates:
+                - Path=/api-docs/post
+              filters:
+                - RewritePath=/api-docs/post,/v3/api-docs
+
+            - id: api-docs-comment-route
+              uri: http://comment-service:4001
+              predicates:
+                - Path=/api-docs/comment
+              filters:
+                - RewritePath=/api-docs/comment,/v3/api-docs
+
+            - id: api-docs-account-route
+              uri: http://account-service:4001
+              predicates:
+                - Path=/api-docs/account
+              filters:
+                - RewritePath=/api-docs/account,/v3/api-docs
+
+            - id: api-docs-auth-route
+              uri: http://auth-service:4001
+              predicates:
+                - Path=/api-docs/auth
+              filters:
+                - RewritePath=/api-docs/auth,/v3/api-docs
+
+server:
+  port: 8000

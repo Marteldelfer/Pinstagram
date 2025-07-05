@@ -1,7 +1,9 @@
 package com.pinstagram.accountservice.grpc;
 
+import com.pinstagram.accountservice.dto.AccountRequestDto;
 import com.pinstagram.accountservice.model.Account;
 import com.pinstagram.tokenservice.AccountDetails;
+import com.pinstagram.tokenservice.CreateAuthUserRequest;
 import com.pinstagram.tokenservice.TokenResponse;
 import com.pinstagram.tokenservice.TokenServiceGrpc;
 import io.grpc.ManagedChannel;
@@ -37,5 +39,13 @@ public class TokenGrpcClient {
                 .build();
         TokenResponse response =  blockingStub.getUnvalidatedToken(tokenRequest);
         return response.getUnvalidatedToken();
+    }
+
+    public void createAuthUser(AccountRequestDto requestDto) {
+        CreateAuthUserRequest request = CreateAuthUserRequest.newBuilder()
+                .setEmail(requestDto.getEmail())
+                .setPassword(requestDto.getPassword())
+                .build();
+        blockingStub.createAuthUser(request);
     }
 }
