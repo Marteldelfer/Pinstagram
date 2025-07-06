@@ -44,21 +44,21 @@ spring:
                 - RewritePath=/api-docs/post,/v3/api-docs
 
             - id: api-docs-comment-route
-              uri: http://comment-service:4001
+              uri: http://comment-service:4002
               predicates:
                 - Path=/api-docs/comment
               filters:
                 - RewritePath=/api-docs/comment,/v3/api-docs
 
             - id: api-docs-account-route
-              uri: http://account-service:4001
+              uri: http://account-service:4003
               predicates:
                 - Path=/api-docs/account
               filters:
                 - RewritePath=/api-docs/account,/v3/api-docs
 
             - id: api-docs-auth-route
-              uri: http://auth-service:4001
+              uri: http://auth-service:4005
               predicates:
                 - Path=/api-docs/auth
               filters:

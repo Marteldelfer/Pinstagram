@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/comments")
-@Tag(name = "Comments", description = "API for managing comments")
+@RequestMapping("/comment")
+@Tag(name = "Comment", description = "API for managing comments")
 public class CommentController {
 
     private final CommentService commentService;
