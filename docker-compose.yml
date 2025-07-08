@@ -149,6 +149,33 @@ services:
     depends_on:
       - auth-service-db
 
+  follower-service-db:
+    image: neo4j
+    container_name: follower-service-db
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    networks:
+      - internal
+
+  follower-service:
+    build:
+      context: ./follower-service
+      dockerfile: Dockerfile
+    container_name: follower-service
+    environment:
+      - spring.neo4j.uri=bolt://follower-service-db:7687
+      - spring.neo4j.authentication.username=neo4j
+      - spring.neo4j.authentication.password=password
+    ports:
+      - "4006:4006"
+    depends_on:
+      - follower-service-db
+    networks:
+      - internal
+
   api-gateway:
     build:
       context: ./api-gateway

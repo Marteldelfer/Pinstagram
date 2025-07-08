@@ -9,7 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-gateway" />
       </profile>
-      <profile name="Annotation profile for account-service" enabled="true">
+      <profile name="Annotation profile for follower-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,6 +19,7 @@
         <module name="posts-service" />
         <module name="auth-service" />
         <module name="comment-service" />
+        <module name="follower-service" />
         <module name="account-service" />
         <module name="email-service" />
       </profile>
@@ -31,6 +32,7 @@
       <module name="auth-service" options="-parameters" />
       <module name="comment-service" options="-parameters" />
       <module name="email-service" options="-parameters" />
+      <module name="follower-service" options="-parameters" />
       <module name="posts-service" options="-parameters" />
     </option>
   </component>
