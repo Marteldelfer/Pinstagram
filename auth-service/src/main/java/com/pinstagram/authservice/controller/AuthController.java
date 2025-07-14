@@ -3,13 +3,16 @@ package com.pinstagram.authservice.controller;
 import com.pinstagram.authservice.dto.LoginRequestDto;
 import com.pinstagram.authservice.dto.LoginResponseDto;
 import com.pinstagram.authservice.service.AuthService;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @Tag(name = "Auth", description = "Account authentication API")
@@ -52,5 +55,14 @@ public class AuthController {
         return authService.verifyAccount(authHeader.substring(7))
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/claims")
+    @Operation(summary = "Return account claims")
+    public ResponseEntity<Map<String, String>> getClaims(@RequestHeader("Authorization") String authHeader) {
+        Claims claims = authService.getClaims(authHeader.substring(7));
+        Map<String, String> claimsMap = claims.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toString()));
+        return ResponseEntity.ok(claimsMap);
     }
 }
