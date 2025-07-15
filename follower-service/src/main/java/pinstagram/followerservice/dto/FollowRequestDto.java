@@ -11,8 +11,6 @@ import java.util.UUID;
 public class FollowRequestDto {
 
     @NotNull
-    private UUID followerId;
-    @NotNull
     private UUID followedId;
 
 }

@@ -31,10 +31,11 @@ public class FollowerService {
         return userRepository.findFollowers(id).stream().map(UserResponseDto::fromUser).toList();
     }
 
-    public void follow(FollowRequestDto requestDto) {
+    public void follow(FollowRequestDto requestDto, String userId) {
         log.info("follow request: {}", requestDto);
-        User follower = userRepository.findById(requestDto.getFollowerId()).orElseGet(
-                () -> userRepository.save(new User(requestDto.getFollowerId()))
+
+        User follower = userRepository.findById(UUID.fromString(userId)).orElseGet(
+                () -> userRepository.save(new User(UUID.fromString(userId)))
         );
         User followed = userRepository.findById(requestDto.getFollowedId()).orElseGet(
                 () -> userRepository.save(new User(requestDto.getFollowedId()))
@@ -43,10 +44,10 @@ public class FollowerService {
         userRepository.save(follower);
     }
 
-    public void unfollow(FollowRequestDto requestDto) {
-        log.info("unfollow request: {} to {}", requestDto.getFollowerId(),  requestDto.getFollowedId());
-        User follower = userRepository.findById(requestDto.getFollowerId()).orElseThrow(
-                () -> new UserNotFoundException("Follower user with id " + requestDto.getFollowerId() + " not found")
+    public void unfollow(FollowRequestDto requestDto, String userId) {
+        log.info("unfollow request: {} to {}", userId,  requestDto.getFollowedId());
+        User follower = userRepository.findById(UUID.fromString(userId)).orElseThrow(
+                () -> new UserNotFoundException("Follower user with id " + userId + " not found")
         );
         follower.getFollows().removeIf(u -> requestDto.getFollowedId().equals(u.getId()));
         userRepository.save(follower);

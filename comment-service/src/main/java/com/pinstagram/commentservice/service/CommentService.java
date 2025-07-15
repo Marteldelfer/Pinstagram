@@ -5,6 +5,7 @@ import com.pinstagram.commentservice.dto.CommentResponseDTO;
 import com.pinstagram.commentservice.dto.CommentUpdateRequestDTO;
 import com.pinstagram.commentservice.exception.CommentNotFoundException;
 import com.pinstagram.commentservice.exception.PostNotFoundException;
+import com.pinstagram.commentservice.exception.UnauthorizedUserException;
 import com.pinstagram.commentservice.grpc.PostValidationGrpcClient;
 import com.pinstagram.commentservice.mapper.Mapper;
 import com.pinstagram.commentservice.model.Comment;
@@ -45,7 +46,7 @@ public class CommentService {
         return Mapper.toDTO(comment);
     }
 
-    public CommentResponseDTO createComment(CommentRequestDTO commentRequest) {
+    public CommentResponseDTO createComment(CommentRequestDTO commentRequest, String userId) {
         logger.info("creating comment from request with content {}", commentRequest.getContent());
 
         if (commentRequest.getParentId() != null) {
@@ -58,6 +59,7 @@ public class CommentService {
         }
         Comment comment = Mapper.toComment(commentRequest);
 
+        comment.setAuthorId(UUID.fromString(userId));
         comment.setCreatedAt(Instant.now());
         comment.setEdited(false);
         comment.setDeleted(false);
@@ -66,8 +68,11 @@ public class CommentService {
         return Mapper.toDTO(commentRepository.save(comment));
     }
 
-    public CommentResponseDTO updateComment(UUID id, CommentUpdateRequestDTO commentRequest) {
+    public CommentResponseDTO updateComment(UUID id, CommentUpdateRequestDTO commentRequest, String userId) {
         Comment comment = getComment(id);
+        if (!comment.getAuthorId().equals(UUID.fromString(userId))) {
+            throw new UnauthorizedUserException("Comment author id and userId do not match");
+        }
         comment.setContent(commentRequest.getContent());
         comment.setEdited(true);
         comment.setEditedAt(Instant.now());

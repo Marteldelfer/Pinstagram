@@ -50,17 +50,21 @@ public class CommentController {
 
     @PostMapping
     @Operation(description = "Create new comment")
-    public ResponseEntity<CommentResponseDTO> saveComment(@Valid @RequestBody CommentRequestDTO commentRequestDTO) {
-        return ResponseEntity.ok().body(commentService.createComment(commentRequestDTO));
+    public ResponseEntity<CommentResponseDTO> saveComment(
+            @Valid @RequestBody CommentRequestDTO commentRequestDTO,
+            @RequestHeader("x-user-id") String userId
+    ) {
+        return ResponseEntity.ok().body(commentService.createComment(commentRequestDTO, userId));
     }
 
     @PutMapping("/{commentId}")
     @Operation(description = "Update comment content")
     public ResponseEntity<CommentResponseDTO> updateComment(
             @PathVariable("commentId") UUID commentId,
-            @Valid@RequestBody CommentUpdateRequestDTO updateRequest
+            @Valid@RequestBody CommentUpdateRequestDTO updateRequest,
+            @RequestHeader("x-user-id") String userId
     ) {
-        return ResponseEntity.ok().body(commentService.updateComment(commentId, updateRequest));
+        return ResponseEntity.ok().body(commentService.updateComment(commentId, updateRequest, userId));
     }
 
     @DeleteMapping("/{commentId}")

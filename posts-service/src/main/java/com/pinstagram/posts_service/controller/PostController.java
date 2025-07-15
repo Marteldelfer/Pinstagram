@@ -37,8 +37,11 @@ public class PostController {
 
     @PostMapping
     @Operation(summary = "Create new post")
-    public ResponseEntity<PostResponseDTO> savePost(@ModelAttribute @Valid PostRequestDTO requestDTO) {
-        return ResponseEntity.ok().body(postService.createPost(requestDTO));
+    public ResponseEntity<PostResponseDTO> savePost(
+            @ModelAttribute @Valid PostRequestDTO requestDTO,
+            @RequestHeader("x-user-id") String userId
+    ) {
+        return ResponseEntity.ok().body(postService.createPost(requestDTO, userId));
     }
 
     @DeleteMapping("/{id}")
@@ -52,8 +55,9 @@ public class PostController {
     @Operation(summary = "Update post")
     public ResponseEntity<PostResponseDTO> updatePost(
             @PathVariable UUID id,
-            @ModelAttribute @Valid PostRequestDTO requestDTO
+            @ModelAttribute @Valid PostRequestDTO requestDTO,
+            @RequestHeader("x-user-id") String userId
     ) {
-        return ResponseEntity.ok().body(postService.updatePost(id, requestDTO));
+        return ResponseEntity.ok().body(postService.updatePost(id, requestDTO, userId));
     }
 }

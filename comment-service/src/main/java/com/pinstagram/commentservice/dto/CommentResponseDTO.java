@@ -14,7 +14,6 @@ public class CommentResponseDTO {
 
     private UUID commentId;
     private UUID postId;
-    private UUID authorId;
     private UUID parentId;
 
     private String content;

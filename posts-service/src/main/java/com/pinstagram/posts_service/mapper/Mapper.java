@@ -24,7 +24,6 @@ public class Mapper {
     }
     public static Post toPost(PostRequestDTO postRequestDTO) {
         return Post.builder()
-                .authorId(postRequestDTO.getAuthorId())
                 .description(postRequestDTO.getDescription())
                 .isPublicVisible(postRequestDTO.isPubliclyVisible())
                 .locationName(postRequestDTO.getLocationName())

@@ -30,14 +30,20 @@ public class FollowerController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> follow(@Valid @RequestBody FollowRequestDto followRequestDto) {
-        followerService.follow(followRequestDto);
+    public ResponseEntity<Void> follow(
+            @Valid @RequestBody FollowRequestDto followRequestDto,
+            @RequestHeader("x-user-id") String userId
+    ) {
+        followerService.follow(followRequestDto, userId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> unfollow(@Valid @RequestBody FollowRequestDto followRequestDto) {
-        followerService.unfollow(followRequestDto);
+    public ResponseEntity<Void> unfollow(
+            @Valid @RequestBody FollowRequestDto followRequestDto,
+            @RequestHeader("x-user-id") String userId
+    ) {
+        followerService.unfollow(followRequestDto, userId);
         return ResponseEntity.ok().build();
     }
 }

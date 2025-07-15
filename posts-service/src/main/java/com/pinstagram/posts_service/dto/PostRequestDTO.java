@@ -6,15 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 public class PostRequestDTO {
-
-    @NotNull(message = "Post author is required")
-    private UUID authorId; // TODO use JWT token instead
-
+    
     @NotNull(message = "Image file is required")
     private MultipartFile image;
 

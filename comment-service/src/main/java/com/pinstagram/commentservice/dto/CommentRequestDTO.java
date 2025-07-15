@@ -13,8 +13,6 @@ public class CommentRequestDTO {
 
     @NotNull
     private UUID postId;
-    @NotNull
-    private UUID authorId; // TODO change to get via JWT
 
     private UUID parentId;
 

@@ -10,7 +10,6 @@ public class Mapper {
         return CommentResponseDTO.builder()
                 .commentId(comment.getId())
                 .postId(comment.getPostId())
-                .authorId(comment.getAuthorId())
                 .parentId(comment.getParentId())
                 .createdAt(comment.getCreatedAt())
                 .editedAt(comment.getEditedAt())
@@ -22,7 +21,6 @@ public class Mapper {
     public static Comment toComment(CommentRequestDTO commentRequestDTO) {
         return Comment.builder()
                 .postId(commentRequestDTO.getPostId())
-                .authorId(commentRequestDTO.getAuthorId())
                 .parentId(commentRequestDTO.getParentId())
                 .content(commentRequestDTO.getContent())
                 .build();

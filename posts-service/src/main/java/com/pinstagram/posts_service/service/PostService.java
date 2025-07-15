@@ -5,6 +5,7 @@ import com.pinstagram.posts_service.dto.PostResponseDTO;
 import com.pinstagram.posts_service.exception.ContentTypeNotValidException;
 import com.pinstagram.posts_service.exception.ImageUploadFailedException;
 import com.pinstagram.posts_service.exception.PostNotFoundException;
+import com.pinstagram.posts_service.exception.UnauthorizedUserException;
 import com.pinstagram.posts_service.mapper.Mapper;
 import com.pinstagram.posts_service.model.Post;
 import com.pinstagram.posts_service.repositories.PostRepository;
@@ -52,7 +53,7 @@ public class PostService {
         return Mapper.toPostResponseDTO(post);
     }
 
-    public PostResponseDTO createPost(PostRequestDTO postRequestDTO) {
+    public PostResponseDTO createPost(PostRequestDTO postRequestDTO, String userId) {
         String contentType = postRequestDTO.getImage().getContentType();
         assert contentType != null;
 
@@ -64,6 +65,7 @@ public class PostService {
             String imageUrl = storageService.uploadFile(postRequestDTO.getImage());
 
             Post post = Mapper.toPost(postRequestDTO);
+            post.setAuthorId(UUID.fromString(userId));
             post.setDeleted(false);
             post.setEdited(false);
             post.setImageUrl(imageUrl);
@@ -83,7 +85,7 @@ public class PostService {
         }
     }
 
-    public PostResponseDTO updatePost(UUID id, PostRequestDTO postRequestDTO) {
+    public PostResponseDTO updatePost(UUID id, PostRequestDTO postRequestDTO, String userId) {
         String contentType = postRequestDTO.getImage().getContentType();
         assert contentType != null;
 
@@ -92,8 +94,12 @@ public class PostService {
         }
         Post post = findActivePostById(id);
 
+        if (!post.getAuthorId().equals(UUID.fromString(userId))) {
+            throw new UnauthorizedUserException("AuthorId and userId do not match");
+        }
         try {
             storageService.updateFile(post.getImageUrl(), postRequestDTO.getImage());
+            post.setAuthorId(UUID.fromString(userId));
             post.setEdited(true);
             post.setDescription(postRequestDTO.getDescription());
 
