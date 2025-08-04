@@ -2,6 +2,7 @@ package com.pinstagram.accountservice.repository;
 
 import com.pinstagram.accountservice.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,5 +19,8 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     Optional<Account> findByEmailAndDeletedFalse(String email);
 
     boolean existsByUsername(String username);
+
+    @Query("SELECT a FROM Account a WHERE LOWER(a.username) LIKE %:search% OR LOWER(a.name) LIKE %:search%")
+    List<Account> searchAccountsByUsernameOrName(String search);
 
 }

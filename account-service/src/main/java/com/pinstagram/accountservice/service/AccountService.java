@@ -149,4 +149,10 @@ public class AccountService {
         account.setUpdatedAt(Instant.now());
         accountRepository.save(account);
     }
+
+    public List<AccountResponseDto> searchAccountsByUsernameOrName(String search) {
+        search = search.toLowerCase();
+        List<Account> accounts = accountRepository.searchAccountsByUsernameOrName(search);
+        return accounts.stream().map(Mapper::toDto).toList();
+    }
 }

@@ -68,4 +68,11 @@ public class AccountController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/search/{search}")
+    @Operation(summary = "Search account by name or username")
+    public ResponseEntity<List<AccountResponseDto>> searchAccounts(@PathVariable("search") String search) {
+        return ResponseEntity.ok(accountService.searchAccountsByUsernameOrName(search));
+    }
+
+
 }
