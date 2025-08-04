@@ -29,7 +29,7 @@ public class JwtUtil {
     public String generateToken(AuthUser authUser, AccountDetails accountDetails) {
         return Jwts.builder()
                 .subject(authUser.getEmail())
-                .claim("id", authUser.getId())
+                .claim("id", accountDetails.getId())
                 .claim("name", accountDetails.getName())
                 .claim("username", accountDetails.getUsername())
                 .claim("role", "user")
