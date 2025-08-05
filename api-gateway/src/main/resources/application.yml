@@ -5,19 +5,49 @@ spring:
     gateway:
       server:
         webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:5173"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                allowedHeaders: "*"
+
           routes:
             - id: post-service-route
               uri: http://post-service:4001
               predicates:
                 - Path=/api/post/**
+                - Method=POST,PUT,DELETE
               filters:
                 - StripPrefix=1
                 - JwtValidation
+
+            - id: get-post-service-route
+              uri: http://post-service:4001
+              predicates:
+                - Path=/api/post/**
+                - Method=GET
+              filters:
+                - StripPrefix=1
 
             - id: comment-service-route
               uri: http://comment-service:4002
               predicates:
                 - Path=/api/comment/**
+                - Method=POST,PUT,DELETE
+              filters:
+                - StripPrefix=1
+                - JwtValidation
+
+            - id: get-comment-service-route
+              uri: http://comment-service:4002
+              predicates:
+                - Path=/api/comment/**
+                - Method=GET
               filters:
                 - StripPrefix=1
                 - JwtValidation
@@ -26,6 +56,16 @@ spring:
               uri: http://account-service:4003
               predicates:
                 - Path=/api/account/**
+                - Method=GET,PUT,DELETE
+              filters:
+                - StripPrefix=1
+                - JwtValidation
+
+            - id: create-account-route
+              uri: http://account-service:4003
+              predicates:
+                - Path=/api/account/**
+                - Method=POST
               filters:
                 - StripPrefix=1
 
